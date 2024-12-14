@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Practice</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        #typing {
+            display: flex;
+            font-size: 24px;
+            flex-wrap: wrap;
+        }
+
+        .letter {
+            padding: 0 1px;
+        }
+
+        .correct {
+            color: green;
+            background-color: rgb(205, 255, 234);
+        }
+
+        .incorrect {
+            color: red;
+            background-color: rgb(255, 194, 194);
+        }
+
+        #resultCard {
+            height: 50%;
+            width: 40%;
+            min-height: 200px;
+            min-width: 250px;
+            box-shadow: 0 0 15px rgba(117, 117, 117, 0.372);
+            border-radius: 15px;
+            display: none;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        h2 {
+            font-size: 4rem;
+            color: rgb(0, 161, 64);
+        }
+
+        h3 {
+            font-size: 2rem;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="timerElement"></div>
+    <div id="typing"></div>
+    <div id="resultCard">
+        <!-- <h2>Thank You!</h2>
+        <h3>Accuracy: 97%</h3>
+        <h3>Word per minute: 25</h3> -->
+    </div>
+    <script>
+        let count = 0;
+        const typingElement = document.getElementById('typing');
+        const myString = 'The quick brown fox jumps over the lazy dog.'; // Case-sensitive string
+        const strArr = myString.split('');
+        const words = myString.split(' ');
+        
+        const timeAllowed = words.length * 5;  //allows 5 seconds for each letter.
+        const sound = new Audio('key2.mp3');
+        const wrongSound = new Audio('wrong.mp3');
+        const eraseSound = new Audio('erase.mp3');
+
+        // Create divs for each letter
+        strArr.forEach(letter => {
+            const letterBox = document.createElement('div');
+            letterBox.className = 'letter';
+            letterBox.textContent = letter === ' ' ? '\u00A0' : letter; // Use non-breaking space for space
+            typingElement.appendChild(letterBox);
+        });
+
+        const letters = document.querySelectorAll('.letter');
+        window.addEventListener('keydown', event => {
+            if (count >= strArr.length) return; // Prevent out-of-bounds typing
+
+            if (event.key === 'Backspace' && count > 0) {
+                eraseSound.currentTime = 0;
+                eraseSound.play();
+                count--;
+                letters[count].classList.remove('correct', 'incorrect');
+            } else if (event.key === strArr[count]) { // Case-sensitive match
+                letters[count].classList.add('correct');
+                sound.currentTime = 0; // Reset the audio to start to allow repeated plays
+                sound.play();
+                count++;
+                if (count === strArr.length) {
+                    displayResult();
+                }
+            } else if (event.key.length === 1) { // Ignore special keys like Shift, Ctrl, etc.
+                letters[count].classList.add('incorrect');
+                wrongSound.currentTime = 0;
+                wrongSound.play();
+                count++;
+            }
+            if (count === 1) {
+                startTimer(timeAllowed);
+            }
+        });
+
+        
+        const resultCard = document.getElementById('resultCard');
+        function displayResult() {
+            resultCard.style.display = 'flex';
+            const corr = document.querySelectorAll('.correct').length;
+            const incorr = document.querySelectorAll('.incorrect').length;
+            const totalAttempted = corr + incorr;
+            resultCard.innerHTML = `<h2>Thank You!</h2>
+                                    <h3>Accuracy: ${isNaN(corr / totalAttempted) ? '0' : ((corr / totalAttempted) * 100).toFixed(0)}%</h3>
+                                    <h3>Word per minute: </h3>`
+
+            timerElement.style.display = 'none';
+        }
+
+        const timerElement = document.getElementById('timerElement')
+        function startTimer(duration) {
+            var timeRemaining = duration;
+
+            // Update the timer display every second
+            countdown = setInterval(() => {
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+
+                // Format time as MM:SS
+                timerElement.textContent =
+                    `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                if (timeRemaining === 0) {
+                    clearInterval(countdown);
+                    displayResult();
+                }
+
+                timeRemaining--;
+            }, 1000);
+        }
+        const timeSpent = timeAllowed - timeRemaining;
+    </script>
+</body>
+
+</html>
