@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5-Minute Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+
+        .timer-container {
+            text-align: center;
+        }
+
+        .timer {
+            font-size: 5rem;
+            font-weight: bold;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="timer-container">
+        <div class="timer" id="timer">05:00</div>
+        <button class="btn" id="startButton">Start Timer</button>
+    </div>
+
+    <script>
+        const timerElement = document.getElementById('timer');
+        const startButton = document.getElementById('startButton');
+        let countdown; // To store the interval reference
+
+        function startTimer(duration) {
+            let timeRemaining = duration;
+
+            // Update the timer display every second
+            countdown = setInterval(() => {
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+
+                // Format time as MM:SS
+                timerElement.textContent = 
+                    `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                if (timeRemaining === 0) {
+                    clearInterval(countdown); // Stop the timer
+                    alert("Time's up!");
+                }
+
+                timeRemaining--;
+            }, 1000);
+        }
+
+        // Start button click handler
+        startButton.addEventListener('click', () => {
+            clearInterval(countdown); // Clear any previous timer
+            startTimer(5 * 60); // Start a 5-minute timer
+        });
+    </script>
+</body>
+
+</html>

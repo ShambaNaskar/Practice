@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        #container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .box {
+            position: relative;
+            /* Required for positioning the star */
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            height: 160px;
+            width: 100px;
+            border-radius: 7px;
+            box-shadow: 0 0 10px #00000024;
+            margin: 10px;
+            border: 2px solid white;
+        }
+
+        .box.rev::after {
+            content: '';
+            /* No text content, but required for pseudo-elements */
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            height: 10px;
+            /* Adjust size as needed */
+            width: 10px;
+            /* Adjust size as needed */
+            background-image: url('star.png');
+            /* Path to your star image */
+            background-size: cover;
+            /* Make the background fit the element */
+            background-repeat: no-repeat;
+        }
+
+        .box.rev {
+            border: 2px solid #0046be;
+            box-shadow: 0 0 10px rgba(128, 0, 128, 0.269);
+        }
+
+        .box.answered {
+            background-color: #f7fffd;
+            /* border: 2px solid #007f44; */
+            box-shadow: 0 0 10px #00800063;
+        }
+
+        lebel {
+            cursor: pointer;
+            color: #4f4f4f;
+            display: flex;
+            align-items: center;
+        }
+
+        input[type="radio"] {
+            /* margin-top: 5px; */
+            height: 15px;
+            width: 15px;
+            cursor: pointer;
+        }
+        button{
+            margin: 3px 0 3px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="ansCount"></div>
+    <div id="unansCount"></div>
+    <div id="revCount"></div>
+    <div id="container"></div>
+
+    <script>
+        let noOfAnswered = 0;
+        let revCount = 0;
+        const container = document.getElementById('container');
+        const ansCount = document.getElementById('ansCount');
+        const unansCount = document.getElementById('unansCount');
+        const revCounter = document.getElementById('revCount');
+        revCounter.textContent = `Marked for Review: ${revCount}`;
+
+        const options = ['A', 'B', 'C', 'D'];
+        for (i = 1; i <= 100; i++) {
+            const box = document.createElement('div');
+            box.className = 'box';
+            box.id = `box${i}`;
+            box.textContent = `${i}.`;
+
+            const btn = document.createElement('button')
+            btn.textContent = 'Clear';
+
+            const revBtn = document.createElement('button');
+            revBtn.textContent = 'Rev Later';
+
+            container.appendChild(box);
+            options.forEach((option) => {
+                const optLabel = document.createElement('label')
+                optLabel.textContent = `(${option})`;
+
+                const opt = document.createElement('input');
+                opt.type = 'radio';
+                opt.name = i;
+                opt.value = `${i}${option}`;
+                optLabel.appendChild(opt);
+                box.appendChild(optLabel);
+
+                box.appendChild(btn);
+                opt.addEventListener('click', () => {
+
+                    if (box.classList.contains('answered') === false) {
+                        noOfAnswered += 1;
+                        box.classList.add('answered');
+                    }
+                    progressUpdate();
+                })
+                btn.addEventListener('click', () => {
+                    opt.checked = false;
+
+                    if (box.classList.contains('answered')) {
+                        box.classList.remove('answered');
+                        noOfAnswered -= 1;
+                    }
+                    progressUpdate();
+                })
+            })
+            box.appendChild(revBtn);
+            revBtn.addEventListener('click', () => {
+                box.classList.toggle('rev');
+                if (revBtn.textContent === 'Rev Later') {
+                    revBtn.textContent = 'Erase Mark';
+                    revCount += 1;
+                } else {
+                    revBtn.textContent = 'Rev Later';
+                    revCount -= 1;
+                }
+                console.log(revCount);
+                revCounter.textContent = `Marked for Review: ${revCount}`;
+            })
+        }
+
+        const numberOfQues = document.querySelectorAll('.box').length;
+
+        const progressUpdate = () => {
+            ansCount.textContent = `Number of answered Questions: ${noOfAnswered} / ${numberOfQues}`;
+            unansCount.textContent = `Unattempted questions: ${numberOfQues - noOfAnswered}`;
+        }
+        progressUpdate();
+    </script>
+
+</body>
+
+</html>

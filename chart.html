@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript">
+          google.charts.load('current', {'packages':['bar']});
+          google.charts.setOnLoadCallback(drawChart);
+            const phyHigh = 96;
+            const phyScore = 78;
+          function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+              ['Subject', 'marks Obtained', 'Highest score'],
+              ['Physics', phyScore, phyHigh],
+              ['Chemistry', 62, 86],
+              ['Mathematics', 86, 92],
+              ['Biology', 51, 86],
+              ['History', 65, 82],
+              ['Geography', 71, 76],
+              ['Language', 62, 85]
+            ]);
+      
+            var options = {
+              chart: {
+                title: 'Company Performance',
+                subtitle: 'Sales, Expenses, and Profit: 2014-2017'
+              },
+              // Add the 'colors' option here
+              colors: ['#0046be', '#00be06', '#00be06'] // Replace with your desired colors
+            };
+      
+            var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
+      
+            chart.draw(data, google.charts.Bar.convertOptions(options));
+          }
+        </script>
+      </head>
+      <body>
+        <div id="columnchart_material" style="width: 800px; height: 500px;"></div>
+      </body>
+      </html>
